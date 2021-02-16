@@ -16,7 +16,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 #equation_rest = equation_rest.to(device)
 
-num_epochs = 35
+num_epochs = 50
 batch_size = 1
 HiddenNeurons=200
 
