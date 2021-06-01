@@ -34,20 +34,21 @@ import torch.nn as nn
 
 
 class CustomClass(nn.Module):
-    def __init__(self, NumberOfInputs,hidden_neurons,NumberOfOutputs):
+    def __init__(self, NumberOfInputs, hidden_neurons, NumberOfOutputs):
         super().__init__()
         self.Sequence = nn.Sequential(
-            nn.Linear(NumberOfInputs,hidden_neurons),
+            nn.Linear(NumberOfInputs, hidden_neurons),
+            nn.Tanh(),
+            nn.Linear(hidden_neurons, hidden_neurons),
+            nn.Tanh(),
+            nn.Linear(hidden_neurons, hidden_neurons),
             nn.Tanh(),
             nn.Linear(hidden_neurons, hidden_neurons),
             nn.Sigmoid(),
-            nn.Linear(hidden_neurons, hidden_neurons),
-            nn.Tanh(),
-            nn.Linear(hidden_neurons, hidden_neurons),
-            nn.Sigmoid(),
-            nn.Linear(hidden_neurons, NumberOfOutputs)
+            nn.Linear(hidden_neurons, NumberOfOutputs),
         )
-    def forward(self,X):
+
+    def forward(self, X):
         return self.Sequence(X)
 
 
