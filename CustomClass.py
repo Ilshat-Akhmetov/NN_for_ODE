@@ -1,35 +1,32 @@
 import torch.nn as nn
 
-# class CustomClass(nn.Module):
-#     def __init__(self, NumberOfInputs,hidden_neurons,NumberOfOutputs):
+# class CustomResNet(nn.Module):
+#     def __init__(self, hidden_neurons):
 #         super().__init__()
-#         self.Sequence1 = nn.Sequential(
-#             nn.Linear(NumberOfInputs,hidden_neurons),
+#         self.Sequence = nn.Sequential(
+#             nn.Linear(hidden_neurons, hidden_neurons),
 #             nn.Tanh(),
 #             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Sigmoid(),
-#             nn.Linear(hidden_neurons, hidden_neurons)
+#             nn.Tanh(),
+#             nn.Linear(hidden_neurons, hidden_neurons),
+#             nn.Tanh()
 #         )
-#         self.Sequence2 = nn.Sequential(
-#             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Sigmoid(),
-#             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Tanh(),
-#             nn.Linear(hidden_neurons, hidden_neurons)
+
+# class CustomClass(nn.Module):
+#     def __init__(self, NumberOfInputs, hidden_neurons, NumberOfOutputs):
+#         super().__init__()
+#         self.SeqStart = nn.Sequential(
+#             nn.Linear(NumberOfInputs, hidden_neurons),
+#             nn.Tanh()
 #         )
-#         self.Sequence3 = nn.Sequential(
-#             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Tanh(),
-#             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Sigmoid(),
-#             nn.Linear(hidden_neurons, hidden_neurons),
-#             nn.Tanh(),
-#             nn.Linear(hidden_neurons, NumberOfOutputs)
-#         )
+#         self.RN1 = CustomResNet(hidden_neurons)
+#         self.RN2 = CustomResNet(hidden_neurons)
+#         self.LinearOutput = nn.Linear(NumberOfInputs, NumberOfOutputs)
 #     def forward(self,X):
-#         X1 = self.Sequence1(X)
-#         X2 = self.Sequence2(X1)+X
-#         X3 = self.Sequence3(X2)
+#         X = self.SeqStart(X)
+#         X1 = self.RN1(X) + X
+#         X2 = self.RN2(X1) + X1
+#         X3 = self.LinearOutput(X2) + X2
 #         return X3
 
 
@@ -44,7 +41,7 @@ class CustomClass(nn.Module):
             nn.Linear(hidden_neurons, hidden_neurons),
             nn.Tanh(),
             nn.Linear(hidden_neurons, hidden_neurons),
-            nn.Sigmoid(),
+            nn.Tanh(),
             nn.Linear(hidden_neurons, NumberOfOutputs),
         )
 

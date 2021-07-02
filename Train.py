@@ -1,8 +1,8 @@
 from tqdm import tqdm
 from CustomDataSet import CustomDataSet
-from Parameters import batch_size, true_analytical_solution
-from Plotting import plot_metrics
-from Metrics import *
+from NN_train_parameters import batch_size
+from Utilities import relative_error, MaxAbsoluteError
+import torch
 
 
 def train_model(
@@ -15,6 +15,7 @@ def train_model(
     val_domain,
     func_approximation,
     differential_operator,
+    true_analytical_solution
 ):
     TorchZero = torch.Tensor([[0.0]])
     train_dataloader = torch.utils.data.DataLoader(
@@ -23,12 +24,13 @@ def train_model(
     val_dataloader = torch.utils.data.DataLoader(
         CustomDataSet(val_domain), batch_size=batch_size, shuffle=False
     )
-    abs_err_train = []
-    abs_err_valid = []
-    relative_err_train = []
-    relative_err_valid = []
-    mse_loss_train = []
-    mse_loss_valid = []
+    abs_err_train = torch.zeros(num_epochs)
+    abs_err_valid = torch.zeros(num_epochs)
+    relative_err_train = torch.zeros(num_epochs)
+    relative_err_valid = torch.zeros(num_epochs)
+    mse_loss_train = torch.zeros(num_epochs)
+    mse_loss_valid = torch.zeros(num_epochs)
+
     true_analytical_solution_train = true_analytical_solution(train_domain)
     true_analytical_solution_valid = true_analytical_solution(val_domain)
 
@@ -67,44 +69,23 @@ def train_model(
             epoch_loss = running_loss / len(dataloader)
             if phase == "train":
                 scheduler.step()
-                mse_loss_train.append(epoch_loss)
+                mse_loss_train[epoch] = epoch_loss
                 nn_preds = model(train_domain)
                 func_preds = func_approximation(train_domain, nn_preds)
-                relative_err_train.append(
-                    relative_error(true_analytical_solution_train, func_preds)
-                    .detach()
-                    .numpy()
-                )
-                abs_err_train.append(
-                    MaxAbsoluteError(true_analytical_solution_train, func_preds)
-                    .detach()
-                    .numpy()
-                )
+                relative_err_train[epoch] = relative_error(true_analytical_solution_train, func_preds).detach()
+                abs_err_train[epoch] = MaxAbsoluteError(true_analytical_solution_train, func_preds).detach()
             #     writer.add_scalar("Loss train: ", epoch_loss, epoch)
             else:
-                mse_loss_valid.append(epoch_loss)
+                mse_loss_valid[epoch] = epoch_loss
                 nn_preds = model(val_domain)
                 func_preds = func_approximation(val_domain, nn_preds)
-                relative_err_valid.append(
-                    relative_error(true_analytical_solution_valid, func_preds)
-                    .detach()
-                    .numpy()
-                )
-                abs_err_valid.append(
-                    MaxAbsoluteError(true_analytical_solution_valid, func_preds)
-                    .detach()
-                    .numpy()
-                )
+                relative_err_valid[epoch] = relative_error(true_analytical_solution_valid, func_preds).detach()
+                abs_err_valid[epoch] = MaxAbsoluteError(true_analytical_solution_valid, func_preds).detach()
             #     writer.add_scalar("Loss validation: ", epoch_loss, epoch)
 
             print("{} Loss: {:.4f}".format(phase, epoch_loss), flush=True)
     # writer.close()
-    plot_metrics(mse_loss_train, "MSE Loss on train set")
-    plot_metrics(mse_loss_valid, "MSE Loss on validation set")
-    plot_metrics(abs_err_train, "Absolute error on train")
-    plot_metrics(abs_err_valid, "Absolute error on test")
-    plot_metrics(relative_err_train, "Relative error on train %")
-    plot_metrics(relative_err_valid, "Relative error on test %")
 
     model.eval()
-    return model
+    epochs = torch.arange(num_epochs)
+    return model, epochs, mse_loss_train, mse_loss_valid, abs_err_train, abs_err_valid, relative_err_train, relative_err_valid
