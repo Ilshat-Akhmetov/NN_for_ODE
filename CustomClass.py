@@ -11,7 +11,9 @@ import torch.nn as nn
 #             nn.Linear(hidden_neurons, hidden_neurons),
 #             nn.Tanh()
 #         )
-
+#     def forward(self,x):
+#         return self.Sequence(x)
+#
 # class CustomClass(nn.Module):
 #     def __init__(self, NumberOfInputs, hidden_neurons, NumberOfOutputs):
 #         super().__init__()
@@ -21,13 +23,17 @@ import torch.nn as nn
 #         )
 #         self.RN1 = CustomResNet(hidden_neurons)
 #         self.RN2 = CustomResNet(hidden_neurons)
-#         self.LinearOutput = nn.Linear(NumberOfInputs, NumberOfOutputs)
+#         self.RN3 = CustomResNet(hidden_neurons)
+#         self.RN4 = CustomResNet(hidden_neurons)
+#         self.LinearOutput = nn.Linear(hidden_neurons, NumberOfOutputs)
 #     def forward(self,X):
 #         X = self.SeqStart(X)
 #         X1 = self.RN1(X) + X
 #         X2 = self.RN2(X1) + X1
-#         X3 = self.LinearOutput(X2) + X2
-#         return X3
+#         X3 = self.RN3(X2) + X2
+#         X4 = self.RN4(X3) + X3
+#         X5 = self.LinearOutput(X4)
+#         return X5
 
 
 class CustomClass(nn.Module):
@@ -48,7 +54,7 @@ class CustomClass(nn.Module):
     def forward(self, X):
         return self.Sequence(X)
 
-
+#
 # class CustomClass(nn.Module):
 #     def __init__(self, NumberOfInputs,hidden_neurons,NumberOfOutputs):
 #         super().__init__()

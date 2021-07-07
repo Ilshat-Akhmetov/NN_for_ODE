@@ -16,7 +16,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # equation_rest = equation_rest.to(device)
 
-num_epochs = 50
+num_epochs = 30
 batch_size = 1
 
 HiddenNeurons = 200
@@ -25,7 +25,7 @@ number_of_outputs = 1
 
 model = CustomClass(number_of_inputs, HiddenNeurons, number_of_outputs)
 
-test_size = 0.3  # 30 % of data belongs to the test domain
+# test_size = 0.3  # 30 % of data belongs to the test domain
 # model.to(device)
 
 number_of_points = 20
